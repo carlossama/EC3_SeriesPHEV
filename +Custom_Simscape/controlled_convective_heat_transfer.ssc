@@ -1,0 +1,43 @@
+component controlled_convection < foundation.thermal.branch
+% Controlled Convective Heat Transfer
+% The block represents an energy transfer by convection between two
+% bodies by means of fluid motion. The transfer is governed by the Newton
+% law of cooling and is directly proportional to the convection heat 
+% transfer coefficient, surface area, and the temperature difference.
+%
+% Connections A and B are thermal conserving ports associated
+% with the points between which the energy transport by convection takes
+% place. The block positive direction is from port A to port B. This means
+% that the heat flow is positive if it flows from A to B. 
+
+% Copyright 2005-2013 The MathWorks, Inc.
+inputs
+    heat_tr_coeff = { 0, 'W/(m^2*K)' }; % PS:left
+end
+
+parameters
+    area = { 1e-4, 'm^2' };              % Area
+    heat_tr_coeff_min = { 0, 'W/(m^2*K)' }; % Min allowable heat transfer coefficient
+end
+
+
+
+function setup
+  % Parameter range checking
+  if area <= 0
+      pm_error('simscape:GreaterThanZero','Area')
+  end
+  if heat_tr_coeff_min < 0
+      pm_error('simscape:GreaterThanOrEqualToZero','Heat transfer coefficient')
+  end
+end
+
+equations
+    if heat_tr_coeff > heat_tr_coeff_min
+       Q == area * heat_tr_coeff * T;
+    else
+       Q == area * heat_tr_coeff_min * T;
+    end   
+end
+
+end
